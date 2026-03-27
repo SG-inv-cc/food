@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="author" content="smallgiantinvcc">
+  <meta name="description" content="ChizzyFoods - Delicious fast food, order online">
+  <meta name="robots" content="index, follow">
+  <title>ChizzyFoods</title>
+  <link rel="icon" href="https://via.placeholder.com/32x32.png?text=C" type="image/png">
+  <style>
+    :root{
+      --main: #ff6b35;
+      --accent: #ffd6a5;
+      --bg: #fff8f0;
+      --text: #333;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Arial', sans-serif; }
+    body { background: var(--bg); scroll-behavior: smooth; }
+
+    /* NAVBAR (Tab/Pill style) */
+    nav {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 15px; background: var(--main); border-radius: 30px; margin: 10px; position: relative; z-index: 10;
+    }
+    nav h3 { font-size: 24px; color: white; }
+    .links { display: flex; gap: 15px; }
+    .links a { padding: 8px 20px; border-radius: 25px; background: rgba(255,255,255,0.2); color: white; text-decoration: none; transition: .3s; display: inline-block; }
+    .links a:hover { background: var(--accent); color: var(--main); }
+    .menu-toggle { display: none; cursor: pointer; font-size: 28px; transition: .3s; color: white; }
+    .menu-toggle:hover { transform: scale(1.1); }
+    .cart-icon { position: relative; cursor: pointer; font-size: 24px; color: white; transition: .3s; }
+    .cart-icon span { position: absolute; top: -5px; right: -10px; padding: 5px 10px; background: red; color: white; border-radius: 50%; font-size: 14px; }
+    .cart-icon:hover { transform: scale(1.1); }
+    @media (max-width: 768px) {
+      .links { flex-direction: column; max-height: 0; overflow: hidden; background: var(--main); border-radius: 20px; }
+      .links.active { max-height: 300px; }
+      .menu-toggle { display: block; }
+      nav { flex-wrap: wrap; }
+      .cart-icon { position: absolute; right: 10px; top: 15px; }
+    }
+
+    /* HERO */
+    .hero { background: linear-gradient(135deg, #ff6b35, #ffd6a5); color: white; text-align: center; padding: 40px 20px; clip-path: ellipse(100% 80% at 50% 0%); }
+    .hero h1 { font-size: 40px; margin-bottom: 10px; }
+    .hero p { font-size: 18px; }
+
+    /* MENU CARDS */
+    .menu-section { padding: 40px 20px; text-align: center; }
+    .menu { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 30px; margin-top: 30px; }
+    .card { background: rgba(255,255,255,0.15); backdrop-filter: blur(12px); border-radius: 25px; overflow: hidden; box-shadow:0 8px 25px rgba(0,0,0,0.2); transition: transform .3s, box-shadow .3s; position: relative; }
+    .card:hover { transform: translateY(-8px) scale(1.02); box-shadow:0 20px 40px rgba(0,0,0,0.25); animation: flash 0.7s ease-in-out infinite; }
+    @keyframes flash { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+    .card img { width:100%; height:180px; object-fit:cover; border-bottom:1px solid rgba(255,255,255,.2); }
+    .card h4 { margin:10px 0; font-size:22px; color: var(--main); }
+    .card p { margin-bottom:10px; font-weight:bold; color: var(--text); }
+    .card .qty { display:flex; justify-content:center; gap:10px; margin-bottom:15px; }
+    .card .qty button { padding:5px 12px; background: var(--main); color:white; border:none; border-radius:8px; cursor:pointer; transition:.3s; }
+    .card .qty button:hover { transform:scale(1.1); }
+
+    /* PANEL (ORDER BOX) */
+    .panel { margin-top:20px; padding:20px; background: rgba(255,255,255,.15); backdrop-filter: blur(12px); border-radius:20px; box-shadow:0 5px 20px rgba(0,0,0,.2); }
+    .panel input { margin:5px; padding:8px 12px; width: calc(50% - 10px); border-radius:10px; border:1px solid #ccc; }
+    .panel button { margin-top:10px; padding:10px 20px; background: var(--main); color:white; border:none; border-radius:15px; cursor:pointer; transition:.3s; }
+    .panel button:hover { transform: scale(1.05); }
+
+    /* PROMO / ADVERTISE / FEATURED */
+    .promo { padding:40px 20px; text-align:center; background:#fff0e5; clip-path: ellipse(100% 85% at 50% 0%); }
+    .advertise, .business-card { margin:20px auto; padding:20px; background: rgba(255,255,255,.15); backdrop-filter: blur(12px); border-radius:20px; box-shadow:0 5px 20px rgba(0,0,0,.2); max-width:400px; text-align:center; }
+    .advertise h3 { color: var(--main); }
+    .advertise p, .business-card p { margin:10px 0; }
+    .business-card img { width:100%; border-radius:15px; }
+    .business-card a { display:block; margin:5px; color: var(--main); text-decoration:none; }
+    .business-card a:hover { text-decoration: underline; }
+
+    /* ORDER CONFIRMATION */
+    #orderConfirmation { padding:40px 20px; text-align:center; background:#fff8f0; border-radius:20px; margin:20px auto; max-width:600px; box-shadow:0 5px 20px rgba(0,0,0,.2); }
+    #orderConfirmation button { padding:10px 20px; background: var(--main); color:white; border:none; border-radius:15px; cursor:pointer; transition:.3s; }
+    #orderConfirmation button:hover { transform: scale(1.05); }
+
+    /* FOOTER */
+    footer { background: var(--main); color:white; padding:30px; text-align:center; }
+    footer a { color:white; text-decoration:underline; margin:0 10px; transition:.3s; }
+    footer a:hover { color: var(--accent); }
+    .social a { margin:0 10px; color:rgb(32,15,225); font-size:20px; text-decoration:none; }
+    .social a:hover { color: var(--accent); }
+
+    /* MODAL */
+    .modal { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6); display:none; justify-content:center; align-items:center; }
+    .modal-content { background:white; padding:20px; border-radius:15px; width:90%; max-width:400px; text-align:center; }
+    .modal-content button { margin-top:15px; padding:10px 20px; background: var(--main); color:white; border:none; border-radius:10px; cursor:pointer; transition:.3s; }
+    .modal-content button:hover { transform:scale(1.05); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <h3>Chizzy Foods</h3>
+  <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+  <div class="links" id="navLinks">
+    <a href="#menu">Menu</a>
+    <a href="#promo">Promo</a>
+    <a href="#contact" onclick="openModal()">Contact</a>
+  </div>
+  <div class="cart-icon" onclick="goToCart()">🛒<span id="cartCount">0</span></div>
+</nav>
+
+<section class="menu-section" id="menu">
+  <h2>Our Menu</h2>
+  <div class="menu" id="menuCards"></div>
+  <div class="panel">
+    <input id="name" placeholder="Your Name">
+    <input id="location" placeholder="Delivery Location">
+    <div id="summary"></div>
+    <div id="total"></div>
+    <button onclick="sendOrder()">Order via WhatsApp</button>
+  </div>
+</section>
+
+<section class="promo" id="promo">
+  <div class="advertise">
+    <h3>Advertise With Us</h3>
+    <p>Promote your business to our hungry customers!</p>
+    <div class="social">
+      <a href="https://instagram.com/sirchizzboy" target="_blank">Instagram</a>
+      <a href="https://wa.me/264858151809" target="_blank">WhatsApp</a>
+      <a href="mailto:smallgiantinvcc1@gmail.com">Email</a>
+    </div>
+  </div>
+
+  <div class="business-card">
+    <img data-src="https://images.unsplash.com/photo-1550547660-d9450f859349" alt="Chizzy Dog" class="lazy">
+    <h4>Chizzy Dog</h4>
+    <p>Delicious Chizzy Hotdogs N Chiprolls and fast delivery service</p>
+    <a href="tel:0858151809">📞 0858151809</a>
+    <a href="mailto:smallgiantinvcc1@gmail.com">📧 Email Us</a>
+  </div>
+</section>
+
+<section id="orderConfirmation" style="display:none;">
+  <h2>Your Order Confirmation</h2>
+  <div id="orderSummary"></div>
+  <button onclick="shareOrder()">Share Your Order</button>
+</section>
+
+<section id="dashboard" style="display:none;">
+  <h2> Orders </h2>
+  <br>
+  <hr>
+  <table id="orderTable">
+    <thead>
+      <tr>
+        <th>Order #</th>
+        <th>Customer Name</th>
+        <th>Items Ordered</th>
+        <th>Total</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <hr>
+</section>
+
+<footer>
+  <p>© 2026 ChizzyFoods</p>
+  <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+</footer>
+
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <h3>Contact Us</h3>
+    <p>📞 0858151809</p>
+    <p>📧 smallgiantinvcc1@gmail.com</p>
+    <button onclick="closeModal()">Close</button>
+  </div>
+</div>
+
+<script>
+  function toggleMenu() { document.getElementById("navLinks").classList.toggle("active"); }
+  function openModal() { document.getElementById("modal").style.display="flex"; }
+  function closeModal() { document.getElementById("modal").style.display="none"; }
+  function goToCart() { window.location.href="#menu"; }
+
+  const menuData = [
+    { name: "Chizzy Dog", price: 10, img: "https://images.unsplash.com/photo-1550547660-d9450f859349" }
+  ];
+
+  let order = {};
+  const menuCards = document.getElementById("menuCards");
+  menuData.forEach((item,i)=>{
+    order[i]=0;
+    menuCards.innerHTML += `<div class="card"><img data-src="${item.img}" class="lazy"><h4>${item.name}</h4><p>N$${item.price}</p><div class="qty"><button onclick="change(${i},-1)">-</button><span id="q${i}">0</span><button onclick="change(${i},1)">+</button></div></div>`;
+  });
+
+  const lazyImages = document.querySelectorAll('img.lazy');
+  const imgObserver = new IntersectionObserver((entries, observer)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        const img = entry.target;
+        img.src = img.dataset.src;
+        img.classList.remove('lazy');
+        observer.unobserve(img);
+      }
+    });
+  });
+  lazyImages.forEach(img=>imgObserver.observe(img));
+
+  function change(i,v){ order[i]+=v; if(order[i]<0)order[i]=0; document.getElementById("q"+i).innerText=order[i]; update(); }
+  function update(){ let text="", total=0; menuData.forEach((item,i)=>{ if(order[i]>0){ text+=`${item.name} x${order[i]}<br>`; total+=item.price*order[i]; } }); document.getElementById("summary").innerHTML=text||"No items"; document.getElementById("total").innerHTML=`N$${total}`; document.getElementById("cartCount").innerText=Object.values(order).reduce((a,b)=>a+b,0); }
+
+  let orders = [];
+  function sendOrder() {
+    let name = document.getElementById("name").value;
+    let loc = document.getElementById("location").value;
+    if(!name||!loc){ alert("Fill your details!"); return; }
+
+    let text="", total=0;
+    menuData.forEach((item,i)=>{ if(order[i]>0){ text+=`${item.name} x${order[i]}%0A`; total+=item.price*order[i]; } });
+    if(!text){ alert("No items selected!"); return; }
+
+    let msg = `Name:${name}%0ALocation:${loc}%0A${text}`;
+    window.open(`https://wa.me/264858151809?text=${msg}`);
+
+    document.getElementById("orderConfirmation").style.display="block";
+    document.getElementById("orderSummary").innerHTML=`Thank you ${name}!<br>Your Order:<br>${text.replace(/%0A/g,'<br>')}<br>Total: N$${total}`;
+
+    orders.push({ name, items: text.replace(/%0A/g,', '), total });
+    const tbody = document.getElementById("orderTable").getElementsByTagName('tbody')[0];
+    const row = tbody.insertRow();
+    row.innerHTML=`<td>${orders.length}</td><td>${name}</td><td>${text.replace(/%0A/g,', ')}</td><td>N$${total}</td><td>Pending</td>`;
+    document.getElementById("dashboard").style.display="block";
+  }
+
+  function shareOrder() { const shareMessage = document.getElementById("orderSummary").innerText; window.open(`https://wa.me/?text=${encodeURIComponent(shareMessage)}`); }
+</script>
+
+</body>
+</html>
